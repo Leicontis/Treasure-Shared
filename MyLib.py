@@ -8,13 +8,22 @@ class Listing:
         self.parent=parent
         self.column=column
         self.startrow=startrow
-        self.mainframe=Scrolledframe(parent,stretch=True)
+        self.mainframe=Frame(parent)
         self.mainframe.grid(row=startrow,column=column,sticky=N+S+E+W)
+        self.mainframe.grid_columnconfigure(0,weight=1)
+        self.parent.grid_rowconfigure(startrow,weight=1)
 
-
-        self.scrolly=Scrollbar(parent,orient='vertical',command=self.mainframe.yview)
-        self.scrolly.grid(row=startrow,column=column+1,sticky=N+E+S+W)
-        self.mainframe['yscrollcommand']=self.scrolly.set
+        #Make it scrollable
+        self.canvas=Canvas(self.mainframe)
+        self.canvas.grid(row=0,column=0,sticky=N+E+S+W)
+        self.canvas.grid_rowconfigure(0,weight=1)
+        self.mainframe.grid_rowconfigure(0,weight=1)
+        self.sframe=Frame(self.canvas)
+        self.scrollbar=Scrollbar(self.mainframe,command=self.canvas.yview)
+        self.canvas.config(yscrollcommand=self.scrollbar.set)
+        self.sframe.bind("<Configure>",lambda e: self.canvas.configure(scrollregion=self.canvas.bbox('all')))
+        self.canvas.create_window((0,0),window=self.sframe,anchor=NW)
+        self.scrollbar.grid(row=0,column=1,sticky=N+E+S)
         
         self.master=master
         #Booleans for "is it currently expanded?"
@@ -39,8 +48,8 @@ class Listing:
     def addBox(self,text='Collapsible Box',row=None,startopen=True):
         abindex=len(self.bools)
         self.bools.append(startopen)
-        self.buttons.append(Button(self.mainframe,text=text,command=lambda:self.togglePanel(abindex)))
-        self.boxes.append(LabelFrame(self.mainframe,labelwidget=self.buttons[abindex],text=text))
+        self.buttons.append(Button(self.sframe,text=text,command=lambda:self.togglePanel(abindex)))
+        self.boxes.append(LabelFrame(self.sframe,labelwidget=self.buttons[abindex],text=text))
         if startopen:
             self.boxes[abindex].grid(row=abindex,column=0,sticky=E+W)
         else:
