@@ -10,8 +10,11 @@ import math
 #The actual window and main frame
 root=Tk()
 root.option_add('*tearOff', FALSE)
+root.grid_rowconfigure(0,weight=1)
 overall=Frame(root)
 overall.pack()
+overall.grid_rowconfigure(0,weight=1)
+overall.grid_rowconfigure(1,weight=1)
 
 #For keeping track of popup dialogs, to make sure only one can be up at a time
 activepopup=BooleanVar(root,value=0)
@@ -43,6 +46,7 @@ tManFrame.grid(row=0,column=1,sticky=N+S,rowspan=2)
 goodsDFrame.grid(row=0,column=2,sticky=E+W+N+S)
 itemDFrame.grid(row=1,column=2,sticky=E+W+N+S)
 settingsFrame.grid(row=0,column=3,sticky=N+S,rowspan=2)
+tManFrame.grid_rowconfigure(0,weight=1)
 
 #Track whether the above panels are currently displayed
 managing=BooleanVar(root,value=True)
